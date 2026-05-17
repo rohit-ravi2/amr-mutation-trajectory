@@ -1,0 +1,37 @@
+# Data + raw
+data/
+raw/
+processed/
+embeddings/
+*.duckdb
+*.parquet
+*.fasta
+*.fna
+*.gbff
+*.tar.gz
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+venv/
+.venv/
+env/
+
+# Logs (gates.log is committed in logs/ above; this catches noise)
+logs/*.log.*
+logs/*_pip*.log
+logs/torch_*.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Notebook noise
+.ipynb_checkpoints/
