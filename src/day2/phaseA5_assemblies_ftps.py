@@ -22,10 +22,10 @@ from pathlib import Path
 import pandas as pd
 from tqdm.auto import tqdm
 
-RAW_DIR = Path("/mnt/hdd/research/amr/raw/patric_assemblies")
-META_DIR = Path("/mnt/hdd/research/amr/raw")
-LOG_PATH = Path("/mnt/ssd/research/amr/logs/day2/phaseA5_ftps.log")
-GATE_LOG = Path("/mnt/ssd/research/amr/logs/gates.log")
+RAW_DIR = Path("work/raw/patric_assemblies")
+META_DIR = Path("work/raw")
+LOG_PATH = Path("work/logs/day2/phaseA5_ftps.log")
+GATE_LOG = Path("work/logs/gates.log")
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)

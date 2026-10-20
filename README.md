@@ -1,111 +1,103 @@
-# AMR Mutation Trajectory — Next-Mutation Prediction Under Antibiotic Selection
+# Predicting the next resistance mutation
 
-[![rohitravi.com](https://img.shields.io/badge/project_page-rohitravi.com-blue)](https://rohitravi.com/projects/amr-mutation-trajectory)
+Given the ordered mutations a bacterial lineage has already accumulated under antibiotic selection, which mutation comes next? This repo holds the pipeline I built for that question: genome and trajectory data assembly, ESM2 protein representations, a LightGBM LambdaRank baseline, an autoregressive trajectory transformer, and a reranker over the two.
 
-Predict the next resistance-conferring mutation given an ordered mutation history. **Canonical-AMR top-3 = 0.403** on an n=571 test split spanning 14 drug classes, via a 3-stage reranker (LightGBM LambdaRank → autoregressive transformer over top-10 → LightGBM reranker with frequency priors + transformer log-probs).
+The clearest result is an ablation: removing the ordered mutation history from the transformer's input drops top-3 accuracy on the E. coli fluoroquinolone test split from 0.527 to 0.156. Ordered history, not the protein-language-model features, is what the model is actually using.
 
-## Headline numbers
+Project page: https://rohitravi.com/projects/amr-mutation-trajectory
 
-| Metric | Value |
-|--------|------:|
-| **Canonical-AMR top-3 (reranker)** | **0.403** |
-| Day-1 LambdaRank canonical-AMR baseline | 0.13–0.21 |
-| LGBM alone, full vocabulary | 0.054 |
-| Transformer alone, full vocabulary | 0.000 |
-| Day-2 ablation: contribution of autoregressive context | **+0.37 top-3** |
-| Drug classes with non-zero canonical-AMR signal | 8 of 14 |
-| Test transitions (canonical-AMR-rich split) | n=571 |
-| Plasmid-borne fraction | 1 / 28,028 transitions |
+## Data assembled
 
-## What's in this repo
+- 28,768 lab-evidence genomes from BV-BRC, phenotyped and annotated with AMRFinderPlus (a resistance-gene call on 98.81% of resistant-phenotype lab genomes; 18,193 annotation rows).
+- 860 ordered directed-evolution trajectories / 28,028 mutation transitions, mostly from ALEdb projects (norfloxacin, tetracycline, ceftazidime, trimethoprim, chloramphenicol) plus Baym 2016 and Imamovic & Sommer 2013.
+- ESM2-650M embeddings for 17,991 unique resistance protein sequences, 11,382 of them cached per residue (half precision, 8 GB RTX 4060 Ti; GyrA/ParC/RpoB handled by chunked inference in `src/day3/phase_b_chunked_esm2.py`).
+- 95,722 single-mutant deep-mutational-scanning fitness measurements across TEM, VIM and DHFR families, z-scored within dataset, plus curated fluoroquinolone DMS from Pal 2015, Marcusson 2009 and Gullberg 2014.
+- 1 of 28,028 transitions is plasmid-borne (`src/day3/phase_e_plasmid_scope.py`), so the models describe chromosomal point-mutation evolution specifically.
+
+## Models
+
+`src/gate6_baseline.py` — LightGBM LambdaRank over candidate mutations, 332 features (frequency priors, gene/drug-class context, ESM2 protein and residue PCA components, DMS fitness). On the E. coli fluoroquinolone split it gets top-3 = 0.705 over all transitions (`results/single_step_eval.json`).
+
+`src/day2/phaseD_transformer_v2.py` — 4-layer causal decoder, d_model 128, 2.63 M parameters, vocabulary of 14,006 mutation tokens. Input per token: learned mutation embedding + projected ESM2 residue vector + DMS fitness scalar, conditioned on drug class and organism, cross-entropy with 5x weight on canonical-AMR mutations. The residue projector (`src/day2/phaseB_residue_projector_v2.py`) is an autoencoder that reconstructs 1280-d ESM2 residue vectors at R² = 0.688 from a 128-d latent, against 0.385 for PCA-32.
+
+`src/day3/phase_d_unified.py` — three stages: LambdaRank scores the full vocabulary and keeps the top 10, the transformer rescores those 10 with autoregressive context, and a second LightGBM combines both scores with frequency priors and drug-class one-hots (23 features).
+
+## Results
+
+Ablations on the transformer, top-3 on the E. coli fluoroquinolone test split (`results/trajectory_ablations.json`, `results/trajectory_eval.json`):
+
+| Variant | top-3 |
+|---|---:|
+| Full model | 0.527 |
+| No canonical-AMR loss weighting | 0.548 |
+| No ESM2 + DMS token features | 0.553 |
+| No autoregressive context | 0.156 |
+
+Dropping ESM2 and DMS features, or the canonical weighting, changes nothing or helps slightly. Dropping the history costs 0.37. That is the finding I would defend.
+
+Day-3 canonical-AMR evaluation, n=571 held-out canonical-AMR transitions across 14 drug classes (`results/day3/phase_d_results.json`):
+
+| Scoring | top-1 | top-3 | n |
+|---|---:|---:|---:|
+| LambdaRank, full vocabulary | 0.021 | 0.054 | 571 |
+| Transformer, full vocabulary | 0.000 | 0.000 | 571 |
+| Reranker, unconditional equivalent | — | ~0.051 | 571 |
+| LambdaRank, on the top-10-contains-answer subset | 0.167 | 0.431 | 72 |
+| Transformer, same subset | 0.153 | 0.403 | 72 |
+| Reranker, same subset | 0.139 | 0.403 | 72 |
+
+The reranker only ever sees the 72 of 571 transitions (12.6%) where stage 1 put the true mutation in its top 10, so its 0.403 is a subset number, not a headline. On that subset plain LambdaRank ranking scores 0.431 and the transformer alone 0.403: the reranker does not beat either component. Unconditionally it lands at about 0.051 against 0.054 for LambdaRank alone. Within the subset the per-class counts are tiny (carbapenem 0.667 at n=9, rifamycin 0.400 at n=10, macrolide 0.182 at n=11), and six classes have n=0 because stage 1 never surfaced their true mutation.
+
+Two other caveats worth stating. MIC supervision is a linear ramp interpolated between ALEdb endpoint measurements, so the Pearson 0.92 between predicted step and MIC is close to tautological. Macrolide canonical top-1 is 0, which most likely means ribosomal-RNA loci are mis-tokenized, since that is where most macrolide resistance lives.
+
+## Repo layout
 
 ```
-src/                     # Day 1 (gates 0-6), Day 2 (phases A-E), Day 3 (phases A-E)
-docs/                    # REPORT.md, REPORT_day2.md, REPORT_day3.md
-results/                 # JSON metrics, per-class breakdowns, ablation tables
-models/                  # residue_projector.pt, trajectory_transformer.pt, LGBM, reranker
-logs/gates.log
+src/gate0_setup.py .. gate6_baseline.py   data acquisition, annotation, trajectories,
+                                          ESM2 embeddings, DMS assembly, LambdaRank baseline
+src/day2/                                 residue projector, LambdaRank v2, trajectory transformer,
+                                          trajectory expansion and fluoroquinolone DMS curation
+src/day3/                                 AMRFinder extension, chunked ESM2, canonical-AMR split,
+                                          reranker, plasmid scope tagging
+results/                                  metrics JSON for every eval above
+models/                                   transformer, residue projector, LambdaRank and reranker
 ```
 
-Models bundled in repo:
-- `models/residue_projector.pt` (15 MB) — Day-2 v2 encoder, R² = 0.688
-- `models/trajectory_transformer.pt` (11 MB) — Day-2 final, 2.6 M params, 4-layer causal decoder
-- `models/single_step_lgbm.pkl` (1.6 MB) — Day-2 LambdaRank baseline
-- `models/day3/transformer_d3.pt` (11 MB) — Day-3 retrained transformer
-- `models/day3/single_step_lgbm_d3.pkl` (1.2 MB) — Day-3 LGBM with canonical-eval features
-- `models/day3/reranker_d3.pkl` (43 KB) — Day-3 final reranker
+Scripts read and write under `work/` (`work/raw`, `work/processed`, `work/embeddings`, `work/models`, `work/results`), which is gitignored; set that up as a symlink to wherever you keep the data. `models/` holds the trained checkpoints: `trajectory_transformer.pt` (11 MB), `residue_projector.pt` (15 MB), `single_step_lgbm.pkl`, and the Day-3 retrains under `models/day3/`. ESM2 embeddings are not bundled; regenerate with `src/gate4_esm2_embeddings.py` (about 17 minutes on an RTX 4060 Ti).
 
-ESM2 protein embeddings (46 MB compressed npz) are not bundled — regenerate via `src/gate4_esm2_embeddings.py`.
+## Data sources
 
-## The architectural finding
+- BV-BRC genome metadata, phenotypes and protein FASTAs, pulled through the public API by `src/gate1_bvbrc.py` and `src/day2/phaseA5_assemblies.py`.
+- AMRFinderPlus and its database, installed separately; point `AMRFINDER_BIN` at the binary.
+- ALEdb (aledb.org) mutation tables and MIC endpoints, `src/day2/phaseA2_aledb_mic.py`.
+- MaveDB and publication supplements for DMS data, `src/gate5_dms.py` and `src/day2/phaseA4_fq_dms.py`.
+- ESM2-650M weights via `fair-esm`.
 
-**Ordered mutation history is what makes the model learn.** Day-2 ablation:
-
-| Ablation | top-3 (eco_fq) | Δ vs main |
-|----------|---------------:|----------:|
-| Main (full model) | 0.527 | — |
-| − canonical 5× weighting | 0.548 | +0.021 |
-| − ESM2 + DMS features | 0.553 | +0.026 |
-| **− autoregressive context** | **0.156** | **−0.371** |
-
-ESM2 + DMS features barely register in additive-feature regimes. Canonical-AMR loss weighting doesn't help on its own. The autoregressive context (each token gets the prefix of observed history) is the load-bearing input.
-
-## The reranker design
-
-A pure transformer softmaxes over 14,006 vocabulary tokens → fails on full-vocab canonical-AMR scoring. LGBM alone scores per-candidate without ordered context → fails differently. The reranker combines:
-
-1. **Stage 1** — LightGBM LambdaRank scores all candidates → keep top-10.
-2. **Stage 2** — Transformer scores those 10 with autoregressive context.
-3. **Stage 3** — LightGBM reranker over 23 features (stage-1 score, stage-2 log-prob, frequency priors, 14 drug-class one-hots).
-
-## Project narrative (3 days)
-
-- **Day 1** — BV-BRC 28,768 lab-evidence genomes phenotyped. AMRFinderPlus 98.81% annotation. ESM2-650M embeddings for 17,991 sequences. DMS fitness 95,722 measurements. ALEdb-derived 28,028 transitions / 860 trajectories. LightGBM LambdaRank: top-3 = 0.708 overall, canonical-AMR = 0.13–0.21.
-- **Day 2** — Residue projector (R² = 0.688, vs PCA-32 R² = 0.385). Autoregressive trajectory transformer trained, AR-context ablation finding (+0.37). Non-FQ trajectory expansion (Imamovic + Barbosa + Melnyk + clinical PATRIC). FQ DMS data added (Pal 2015, Marcusson 2009, Gullberg 2014).
-- **Day 3** — Built proper canonical-AMR test split (n=571, 14 classes). Long-protein chunked ESM2 for GyrA/ParC/RpoB. **Reranker delivered canonical-AMR top-3 = 0.403** on 8 of 14 drug classes. Plasmid scope tagging confirmed chromosomal-mutation regime dominates.
-
-Full reports under `docs/`:
-- [Day 1 report](docs/REPORT.md)
-- [Day 2 supplemental](docs/REPORT_day2.md)
-- [Day 3 supplemental](docs/REPORT_day3.md)
-
-## Reproducing
+## Running it
 
 ```bash
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
+mkdir -p work          # or: ln -s /path/to/data work
 
-# Download data (~50 GB)
-bash scripts/data_download.sh   # BV-BRC API + ALEdb + Pal 2015 / Marcusson 2009 supplementary
-
-# Day 1 foundation
 python src/gate1_bvbrc.py
-python src/gate2_card.py        # AMRFinderPlus annotation
+python src/gate2_card.py              # AMRFinderPlus annotation
 python src/gate3_trajectories.py
-python src/gate4_esm2_embeddings.py  # GPU required, ~17 min on RTX 4060 Ti
+python src/gate4_esm2_embeddings.py   # GPU
 python src/gate5_dms.py
-python src/gate6_baseline.py    # LightGBM LambdaRank baseline
+python src/gate6_baseline.py          # LambdaRank baseline
 
-# Day 2
-python src/day2/phaseB_residue_projector_v2.py  # GPU, ~20 min
-python src/day2/phaseD_transformer_v2.py        # GPU, ~3h
+python src/day2/phaseB_residue_projector_v2.py   # GPU, ~20 min
+python src/day2/phaseD_transformer_v2.py         # GPU, ~3 h, writes the ablation table
 
-# Day 3
 python src/day3/phase_c_canonical_split.py
-python src/day3/phase_d_reranker_v2.py
+python src/day3/phase_d_unified.py
 ```
 
-## Known holes (these are in the report, not afterthought)
+## Notes
 
-1. **Reranker pipeline drops ~87% of test transitions** — when `tf_logprob` is NaN for a (mutation, candidate) pair (candidate not in transformer vocab), the pair is dropped instead of receiving a `has_tf=0` indicator. Mechanical fix; Day-4 work.
-2. **6 of 14 drug classes have n=0 in the per-class breakdown** of reranker outputs. Per #1.
-3. **MIC supervision is on a proxy** — step-number ↔ MIC Pearson = 0.92 is largely tautological because MIC was linearly interpolated between experiment endpoints.
-4. **Macrolide canonical-AMR top-1 = 0** — ribosomal-RNA mutations may be mis-tokenized.
-
-## Honest assessment
-
-Trajectory framing (predict next mutation, not phenotype-from-genome) is **moderately differentiated** from the AMR literature. The +0.37 from AR context is a clean architectural finding. The reranker bridging LGBM and transformer is reusable. Limitations: trajectory diversity (86% FQ in Day 1, partially fixed Day 2/3), MIC proxy, no held-out organism / drug-class OOD eval.
+The gap between the overall metric (top-3 0.705 for LambdaRank) and the canonical-AMR metric (0.054) is the honest story of this dataset: 86% of the trajectories come from one hypermutator fluoroquinolone experiment, so most transitions are passenger mutations that are easy to rank by frequency, and the clinically meaningful canonical-AMR transitions are rare and hard. There is no held-out-organism or held-out-drug-class evaluation here, so every number is on data chromosomally similar to the training set.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).

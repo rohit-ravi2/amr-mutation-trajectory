@@ -7,7 +7,7 @@ For each protein with seq_len > 512:
     * Non-edge positions (>=64 from window start/end) weight = 1.0
     * Edge positions (first/last 64 aa of a window) weight = 0.5
   - Apply Day-2 learned projector (1280 -> 128) to produce float16 [seq_len, 128].
-  - Save to /mnt/ssd/research/amr/embeddings/residue_embeddings_long/<md5>.npy
+  - Save to work/embeddings/residue_embeddings_long/<md5>.npy
   - Also: append mean-pooled embedding (post-projector? or pre? we'll save pre-projector
     1280-dim mean for protein_embeddings.npz compatibility)
   - Update residue_embeddings_index.parquet with seq_len and embedding_method="chunked_window".
@@ -23,7 +23,7 @@ import torch.nn as nn
 from tqdm import tqdm
 
 DEV = 'cuda' if torch.cuda.is_available() else 'cpu'
-SSD = Path('/mnt/ssd/research/amr')
+SSD = Path('work')
 EMB_DIR = SSD / 'embeddings'
 LONG_DIR = EMB_DIR / 'residue_embeddings_long'
 LONG_DIR.mkdir(parents=True, exist_ok=True)
@@ -155,7 +155,7 @@ def main():
     if tem1_md5:
         for sp in ['ecoli', 'saureus', 'kpneumo']:
             try:
-                p = pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet')
+                p = pd.read_parquet(f'work/raw/proteins_{sp}.parquet')
                 hit = p[p['aa_sequence_md5'] == tem1_md5]
                 if len(hit):
                     tem1_seq = hit.iloc[0]['aa_sequence']

@@ -10,9 +10,9 @@ Output schema (one row per (gene, position, WT, mutant, condition)):
     source_dataset, source_doi, condition, source_normalization
 
 Output:
-    /mnt/ssd/research/amr/processed/dms_fitness.parquet
+    work/processed/dms_fitness.parquet
 Per-source intermediates:
-    /mnt/ssd/research/amr/processed/gate5_dms_intermediate/<source>.parquet
+    work/processed/gate5_dms_intermediate/<source>.parquet
 
 Pass criterion:
     >= 3 datasets, >= 2 gene families, >= 10,000 measurements.
@@ -38,7 +38,7 @@ from Bio.Data.IUPACData import protein_letters_3to1
 # -----------------------------------------------------------------------------
 # Paths and logging
 # -----------------------------------------------------------------------------
-ROOT = Path("/mnt/ssd/research/amr")
+ROOT = Path("work")
 PROCESSED = ROOT / "processed"
 INTERMEDIATE = PROCESSED / "gate5_dms_intermediate"
 LOG_DIR = ROOT / "logs"

@@ -81,9 +81,9 @@ FEATURE_CHUNK = 5000  # CDS rows per page (per genome — most genomes <10K CDS)
 PHENO_FLUSH = 5000   # rows between parquet flushes
 
 # Storage paths
-HDD_ROOT = Path("/mnt/hdd/research/amr/raw")
-SSD_LOGS = Path("/mnt/ssd/research/amr/logs")
-SSD_PROCESSED = Path("/mnt/ssd/research/amr/processed")
+HDD_ROOT = Path("work/raw")
+SSD_LOGS = Path("work/logs")
+SSD_PROCESSED = Path("work/processed")
 GATE_LOG = SSD_LOGS / "gates.log"
 
 SPECIES = [

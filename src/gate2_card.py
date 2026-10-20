@@ -2,7 +2,7 @@
 Gate 2 — CARD download + AMRFinderPlus annotation of Gate 1 genomes.
 
 This script:
-  1. Verifies CARD assets at /mnt/hdd/research/amr/raw/card/.
+  1. Verifies CARD assets at work/raw/card/.
   2. Writes per-genome protein FASTAs from proteins_<sp>.parquet
      (resumable — skips if file already exists).
   3. Runs AMRFinderPlus in protein-only mode on each FASTA in parallel.
@@ -32,8 +32,8 @@ import numpy as np
 from tqdm import tqdm
 
 # ---------- Paths ----------
-ROOT          = Path("/mnt/ssd/research/amr")
-HDD_RAW       = Path("/mnt/hdd/research/amr/raw")
+ROOT          = Path("work")
+HDD_RAW       = Path("work/raw")
 CARD_DIR      = HDD_RAW / "card"
 FASTA_DIR     = ROOT / "processed" / "protein_fastas"
 CALLS_DIR     = ROOT / "processed" / "amrfinder_calls"
@@ -44,7 +44,7 @@ GATE_LOG      = LOG_DIR / "gates.log"
 GATE2_LOG     = LOG_DIR / "gate2_card.log"
 SUMMARY_JSON  = ROOT / "processed" / "gate2_summary.json"
 
-AMRFINDER_BIN = "/home/rohit/miniconda3/envs/amrfinder/bin/amrfinder"
+AMRFINDER_BIN = os.environ.get("AMRFINDER_BIN", "amrfinder")
 
 SPECIES = {
     "ecoli":   {"organism": "Escherichia",        "proteins_pq": HDD_RAW/"proteins_ecoli.parquet",

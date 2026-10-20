@@ -31,14 +31,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm.auto import tqdm
 
-EMB_DIR = Path("/mnt/ssd/research/amr/embeddings")
+EMB_DIR = Path("work/embeddings")
 RES_DIR = EMB_DIR / "residue_embeddings"
 PROT_NPZ = EMB_DIR / "protein_embeddings.npz"
 
-MODEL_OUT = Path("/mnt/ssd/research/amr/models/residue_projector.pt")
-CFG_OUT   = Path("/mnt/ssd/research/amr/models/residue_projector_cfg.json")
-LOG_PATH  = Path("/mnt/ssd/research/amr/logs/day2/phaseB_v2_run.log")
-GATE_LOG  = Path("/mnt/ssd/research/amr/logs/gates.log")
+MODEL_OUT = Path("work/models/residue_projector.pt")
+CFG_OUT   = Path("work/models/residue_projector_cfg.json")
+LOG_PATH  = Path("work/logs/day2/phaseB_v2_run.log")
+GATE_LOG  = Path("work/logs/gates.log")
 
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 
@@ -168,7 +168,7 @@ def validate_tem_pair(model, device, log):
     """Substitution-corridor check using two TEM variants pair."""
     out = {"verified": False, "in_corridor_pct": None}
     try:
-        rg = pd.read_parquet("/mnt/ssd/research/amr/processed/resistance_genes.parquet")
+        rg = pd.read_parquet("work/processed/resistance_genes.parquet")
     except Exception:
         rg = pd.DataFrame()
 
@@ -178,7 +178,7 @@ def validate_tem_pair(model, device, log):
     # Find pair via product names
     candidates = set()
     for sp in ["ecoli", "kpneumo"]:
-        df = pd.read_parquet(Path("/mnt/hdd/research/amr/raw") / f"proteins_{sp}.parquet",
+        df = pd.read_parquet(Path("work/raw") / f"proteins_{sp}.parquet",
                              columns=["product", "aa_sequence_md5"])
         m = df["product"].astype(str).str.contains("TEM", case=False, na=False)
         for x in df.loc[m, "aa_sequence_md5"].dropna().unique():

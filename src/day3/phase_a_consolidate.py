@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-RAW = Path('/mnt/hdd/research/amr/raw')
-SSD = Path('/mnt/ssd/research/amr')
+RAW = Path('work/raw')
+SSD = Path('work')
 EMB = SSD / 'embeddings' / 'protein_embeddings.npz'
 OUT = SSD / 'processed' / 'day3'
 OUT.mkdir(parents=True, exist_ok=True)

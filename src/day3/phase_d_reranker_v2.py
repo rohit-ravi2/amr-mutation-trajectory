@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-SSD = Path('/mnt/ssd/research/amr')
+SSD = Path('work')
 SRC = SSD / 'src'
 RESULTS = SSD / 'results' / 'day3'
 MODELS  = SSD / 'models' / 'day3'
@@ -152,7 +152,7 @@ canonical_kw = {
 }
 for sp in ['ecoli','saureus','kpneumo']:
     try:
-        p = pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet', columns=['gene','product','aa_sequence_md5'])
+        p = pd.read_parquet(f'work/raw/proteins_{sp}.parquet', columns=['gene','product','aa_sequence_md5'])
         for gene, kws in canonical_kw.items():
             if gene in gene_to_md5 and gene_to_md5[gene]: continue
             for kw in kws:
@@ -225,7 +225,7 @@ for _, r in dms.iterrows():
 
 gene_to_md5_tf = {}
 for sp in ['ecoli','saureus','kpneumo']:
-    p = pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet',
+    p = pd.read_parquet(f'work/raw/proteins_{sp}.parquet',
                         columns=['gene','aa_sequence_md5','aa_length'])
     p = p[p['gene'].notna() & p['aa_sequence_md5'].notna()].sort_values('aa_length')
     for _, r in p.iterrows():

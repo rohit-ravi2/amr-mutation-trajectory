@@ -52,10 +52,10 @@ import sys
 import numpy as np
 import pandas as pd
 
-OUT = Path("/mnt/ssd/research/amr/processed/dms_fitness.parquet")
-INTERMEDIATE_OUT = Path("/mnt/ssd/research/amr/processed/day2/fq_dms_curated.parquet")
-LOG_PATH = Path("/mnt/ssd/research/amr/logs/day2/phaseA4_fq_dms.log")
-GATE_LOG = Path("/mnt/ssd/research/amr/logs/gates.log")
+OUT = Path("work/processed/dms_fitness.parquet")
+INTERMEDIATE_OUT = Path("work/processed/day2/fq_dms_curated.parquet")
+LOG_PATH = Path("work/logs/day2/phaseA4_fq_dms.log")
+GATE_LOG = Path("work/logs/gates.log")
 
 
 def setup_logger() -> logging.Logger:

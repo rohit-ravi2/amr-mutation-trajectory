@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-EMB = Path('/mnt/ssd/research/amr/embeddings')
+EMB = Path('work/embeddings')
 
 # Existing index (short)
 idx_short = pd.read_parquet(EMB / 'residue_embeddings_index.parquet')

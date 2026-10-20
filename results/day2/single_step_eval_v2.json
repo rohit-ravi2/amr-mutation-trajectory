@@ -1,0 +1,283 @@
+{
+  "params": {
+    "objective": "lambdarank",
+    "metric": "ndcg",
+    "ndcg_at": [
+      1,
+      3,
+      10
+    ],
+    "learning_rate": 0.05,
+    "num_leaves": 63,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.85,
+    "bagging_fraction": 0.85,
+    "bagging_freq": 5,
+    "lambda_l2": 0.1,
+    "verbose": -1,
+    "max_depth": -1
+  },
+  "best_iter": 230,
+  "fit_time_sec": 105.3732099533081,
+  "n_features": 332,
+  "n_train_transitions": 24098,
+  "n_val_transitions": 2677,
+  "splits": {
+    "eco_fq": {
+      "n_transitions_evaluated": 880,
+      "all": {
+        "top1": 0.5965909090909091,
+        "top3": 0.7045454545454546,
+        "top5": 0.7318181818181818,
+        "top10": 0.7943181818181818
+      },
+      "step_first": {
+        "n": 46,
+        "top1": 0.4782608695652174,
+        "top3": 0.5,
+        "top5": 0.5,
+        "top10": 0.6304347826086957
+      },
+      "step_later": {
+        "n": 834,
+        "top1": 0.6031175059952039,
+        "top3": 0.7158273381294964,
+        "top5": 0.7446043165467626,
+        "top10": 0.8033573141486811
+      },
+      "canonical_amr_pos": {
+        "n": 16,
+        "top1": 0.125,
+        "top3": 0.125,
+        "top5": 0.125,
+        "top10": 0.1875
+      },
+      "passenger_pos": {
+        "n": 864,
+        "top1": 0.6053240740740741,
+        "top3": 0.7152777777777778,
+        "top5": 0.7430555555555556,
+        "top10": 0.8055555555555556
+      }
+    },
+    "ale_fq_holdout": {
+      "n_transitions_evaluated": 914,
+      "all": {
+        "top1": 0.6083150984682714,
+        "top3": 0.7450765864332604,
+        "top5": 0.7866520787746171,
+        "top10": 0.8424507658643327
+      },
+      "step_first": {
+        "n": 40,
+        "top1": 0.525,
+        "top3": 0.725,
+        "top5": 0.75,
+        "top10": 0.85
+      },
+      "step_later": {
+        "n": 874,
+        "top1": 0.6121281464530892,
+        "top3": 0.7459954233409611,
+        "top5": 0.7883295194508009,
+        "top10": 0.8421052631578947
+      },
+      "canonical_amr_pos": {
+        "n": 39,
+        "top1": 0.1794871794871795,
+        "top3": 0.20512820512820512,
+        "top5": 0.20512820512820512,
+        "top10": 0.20512820512820512
+      },
+      "passenger_pos": {
+        "n": 875,
+        "top1": 0.6274285714285714,
+        "top3": 0.7691428571428571,
+        "top5": 0.8125714285714286,
+        "top10": 0.8708571428571429
+      }
+    },
+    "sa_oxa": {
+      "n_transitions": 0
+    },
+    "kp_mero": {
+      "n_transitions_evaluated": 9,
+      "all": {
+        "top1": 0.6666666666666666,
+        "top3": 1.0,
+        "top5": 1.0,
+        "top10": 1.0
+      },
+      "step_first": {
+        "n": 4,
+        "top1": 1.0,
+        "top3": 1.0,
+        "top5": 1.0,
+        "top10": 1.0
+      },
+      "step_later": {
+        "n": 5,
+        "top1": 0.4,
+        "top3": 1.0,
+        "top5": 1.0,
+        "top10": 1.0
+      },
+      "canonical_amr_pos": {
+        "n": 9,
+        "top1": 0.6666666666666666,
+        "top3": 1.0,
+        "top5": 1.0,
+        "top10": 1.0
+      },
+      "passenger_pos": {
+        "n": 0,
+        "top1": NaN,
+        "top3": NaN,
+        "top5": NaN,
+        "top10": NaN
+      }
+    }
+  },
+  "vocabulary_sizes": {
+    "aminoglycoside": 599,
+    "carbapenem": 573,
+    "cephalosporin": 602,
+    "diaminopyrimidine": 1110,
+    "fluoroquinolone": 1520,
+    "fosfomycin": 570,
+    "glycopeptide": 570,
+    "macrolide": 571,
+    "nitrofuran": 570,
+    "penicillin": 596,
+    "phenicol": 585,
+    "rifamycin": 570,
+    "sulfonamide": 570,
+    "tetracycline": 650,
+    "unspecified": 570
+  },
+  "true_mut_in_vocab_pct": 56.06410525579116,
+  "ale_holdout_experiment": "e1226",
+  "primary_eco_fq_holdout_experiment": "e1230",
+  "top_features_by_gain": [
+    {
+      "feature": "mut_freq_in_train",
+      "gain": 957830.2948268652
+    },
+    {
+      "feature": "mut_freq_fluoroquinolone",
+      "gain": 318812.1083563566
+    },
+    {
+      "feature": "cand_canonical_amr",
+      "gain": 194235.87057733536
+    },
+    {
+      "feature": "dc_fluoroquinolone",
+      "gain": 46671.53536939621
+    },
+    {
+      "feature": "step_number",
+      "gain": 45372.23396265507
+    },
+    {
+      "feature": "mut_freq_diaminopyrimidine",
+      "gain": 33463.06442785263
+    },
+    {
+      "feature": "dc_diaminopyrimidine",
+      "gain": 26219.907650709152
+    },
+    {
+      "feature": "dc_rifamycin",
+      "gain": 19972.06642985344
+    },
+    {
+      "feature": "dist_to_existing",
+      "gain": 14645.177389383316
+    },
+    {
+      "feature": "cand_p_4",
+      "gain": 13554.284175395966
+    },
+    {
+      "feature": "n_mut_background",
+      "gain": 12361.27137541771
+    },
+    {
+      "feature": "kind_aa",
+      "gain": 11031.56552362442
+    },
+    {
+      "feature": "wt_V",
+      "gain": 10122.684473991394
+    },
+    {
+      "feature": "mut_freq_tetracycline",
+      "gain": 9766.993726491928
+    },
+    {
+      "feature": "wt_S",
+      "gain": 6684.800542831421
+    },
+    {
+      "feature": "wt_A",
+      "gain": 6185.9078249931335
+    },
+    {
+      "feature": "mut_A",
+      "gain": 5527.971019268036
+    },
+    {
+      "feature": "wt_D",
+      "gain": 5202.251546859741
+    },
+    {
+      "feature": "mut_L",
+      "gain": 4684.167536735535
+    },
+    {
+      "feature": "mut_freq_rifamycin",
+      "gain": 4534.09419965744
+    },
+    {
+      "feature": "wt_F",
+      "gain": 4527.2044942379
+    },
+    {
+      "feature": "mut_V",
+      "gain": 4366.222570896149
+    },
+    {
+      "feature": "mut_G",
+      "gain": 4281.907775521278
+    },
+    {
+      "feature": "wt_G",
+      "gain": 3949.5235068798065
+    },
+    {
+      "feature": "wt_N",
+      "gain": 3944.8840057849884
+    },
+    {
+      "feature": "mut_freq_cephalosporin",
+      "gain": 3895.511936187744
+    },
+    {
+      "feature": "wt_Y",
+      "gain": 3894.9845991134644
+    },
+    {
+      "feature": "kind_pseudo",
+      "gain": 3737.5459060668945
+    },
+    {
+      "feature": "mut_E",
+      "gain": 3736.1789717674255
+    },
+    {
+      "feature": "wt_L",
+      "gain": 3702.918689250946
+    }
+  ]
+}

@@ -39,7 +39,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
 # Reuse from v1 file
-SSD = Path("/mnt/ssd/research/amr")
+SSD = Path("work")
 PROC = SSD / "processed"
 EMB  = SSD / "embeddings"
 MODEL_OUT = SSD / "models" / "trajectory_transformer.pt"
@@ -568,7 +568,7 @@ def main():
     # gene_symbol -> md5 via proteins parquet (the 'gene' column)
     gene_to_md5 = {}
     for sp in ["ecoli","saureus","kpneumo"]:
-        p = pd.read_parquet(f"/mnt/hdd/research/amr/raw/proteins_{sp}.parquet",
+        p = pd.read_parquet(f"work/raw/proteins_{sp}.parquet",
                             columns=["gene","aa_sequence_md5","aa_length"])
         p = p[p["gene"].notna() & p["aa_sequence_md5"].notna()]
         # Prefer shorter proteins (more likely to have residue file)
@@ -579,7 +579,7 @@ def main():
                 gene_to_md5.setdefault(str(g), str(m))
     # Also map from resistance_genes.parquet for canonical gene symbols
     try:
-        rg = pd.read_parquet("/mnt/ssd/research/amr/processed/resistance_genes.parquet")
+        rg = pd.read_parquet("work/processed/resistance_genes.parquet")
         # 'gene_symbol' rows like 'gyrA_S84L' include the substitution; extract
         # the gene prefix
         rg["gene_only"] = rg["gene_symbol"].astype(str).str.split("_").str[0]

@@ -6,7 +6,7 @@ import pandas as pd
 import hashlib
 from pathlib import Path
 
-EMB_DIR = Path('/mnt/ssd/research/amr/embeddings')
+EMB_DIR = Path('work/embeddings')
 
 def md5_of(seq):
     return hashlib.md5(seq.encode()).hexdigest()
@@ -83,7 +83,7 @@ print(f"Mean-pooled L2 distance: {l2:.4f}")
 
 # Discriminability test: TEM-1 vs random *non-beta-lactamase* protein
 print("\n== Spread test: resistance vs random pairs ==")
-prots = pd.concat([pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet',
+prots = pd.concat([pd.read_parquet(f'work/raw/proteins_{sp}.parquet',
                                     columns=['aa_sequence_md5', 'aa_sequence', 'aa_length'])
                    for sp in ['ecoli', 'saureus', 'kpneumo']],
                    ignore_index=True).drop_duplicates(subset='aa_sequence_md5')

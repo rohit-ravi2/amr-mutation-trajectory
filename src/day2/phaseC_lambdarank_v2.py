@@ -25,16 +25,16 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-SRC_ROOT = Path("/mnt/ssd/research/amr/src")
+SRC_ROOT = Path("work/src")
 sys.path.insert(0, str(SRC_ROOT))
 
 import gate6_baseline as g6  # noqa: E402
 
 LOG = logging.getLogger("phaseC")
 LOG.setLevel(logging.INFO)
-LOG_PATH = Path("/mnt/ssd/research/amr/logs/day2/phaseC_lambdarank_v2.log")
+LOG_PATH = Path("work/logs/day2/phaseC_lambdarank_v2.log")
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-GATE_LOG = Path("/mnt/ssd/research/amr/logs/gates.log")
+GATE_LOG = Path("work/logs/gates.log")
 
 if not LOG.handlers:
     fmt = logging.Formatter("%(asctime)sZ %(levelname)s %(message)s",
@@ -42,9 +42,9 @@ if not LOG.handlers:
     sh = logging.StreamHandler(); sh.setFormatter(fmt); LOG.addHandler(sh)
     fh = logging.FileHandler(LOG_PATH, mode="a"); fh.setFormatter(fmt); LOG.addHandler(fh)
 
-MODEL_PATH = Path("/mnt/ssd/research/amr/models/residue_projector.pt")
-MODEL_OUT  = Path("/mnt/ssd/research/amr/models/day2/single_step_lgbm_v2.pkl")
-RESULTS_OUT = Path("/mnt/ssd/research/amr/results/day2/single_step_eval_v2.json")
+MODEL_PATH = Path("work/models/residue_projector.pt")
+MODEL_OUT  = Path("work/models/day2/single_step_lgbm_v2.pkl")
+RESULTS_OUT = Path("work/results/day2/single_step_eval_v2.json")
 MODEL_OUT.parent.mkdir(parents=True, exist_ok=True)
 RESULTS_OUT.parent.mkdir(parents=True, exist_ok=True)
 
@@ -129,7 +129,7 @@ def main():
     # Patch first.
     patch_gate6()
     # Force re-fitting (not loading old pca_r pickle, which is PCA-32)
-    pca_r_path = Path("/mnt/ssd/research/amr/models/esm2_pca_residue.pkl")
+    pca_r_path = Path("work/models/esm2_pca_residue.pkl")
     bak = pca_r_path.with_suffix(".pkl.day1bak")
     if pca_r_path.exists() and not bak.exists():
         pca_r_path.rename(bak)
@@ -143,13 +143,13 @@ def main():
 
     # Copy outputs to day2 results
     import shutil
-    src_eval = Path("/mnt/ssd/research/amr/results/single_step_eval.json")
+    src_eval = Path("work/results/single_step_eval.json")
     if src_eval.exists():
         shutil.copy(src_eval, RESULTS_OUT)
         LOG.info("Copied eval -> %s", RESULTS_OUT)
 
     # Also copy model snapshot
-    src_model = Path("/mnt/ssd/research/amr/models/single_step_lgbm.pkl")
+    src_model = Path("work/models/single_step_lgbm.pkl")
     if src_model.exists():
         shutil.copy(src_model, MODEL_OUT)
 

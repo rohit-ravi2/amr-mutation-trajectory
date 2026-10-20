@@ -5,14 +5,14 @@ Build a new eval split where canonical-AMR transitions are *enriched*:
 - Test: clinical / CARD-derived / curated canonical-AMR-rich trajectories
         (Imamovic, Barbosa, Melnyk, PATRIC, CARD_snp_*)
 
-Save splits at /mnt/ssd/research/amr/processed/splits/canonical_amr_split.pkl
+Save splits at work/processed/splits/canonical_amr_split.pkl
 """
 import os, sys, json, pickle
 from pathlib import Path
 import pandas as pd
 import numpy as np
 
-SSD = Path('/mnt/ssd/research/amr')
+SSD = Path('work')
 OUT_DIR = SSD / 'processed' / 'splits'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

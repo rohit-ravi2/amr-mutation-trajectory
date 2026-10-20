@@ -1,0 +1,95 @@
+{
+  "no_canonical_weighting": {
+    "best_val_canon_top3": 0.03809523954987526,
+    "results": {
+      "test_eco_fq": {
+        "name": "test_eco_fq",
+        "n_samples": 874,
+        "top1": 0.41189929842948914,
+        "top3": 0.5480548739433289,
+        "top5": 0.5594965219497681,
+        "top10": 0.5881006717681885,
+        "top1_canonical": 0.0,
+        "top3_canonical": 0.0,
+        "top5_canonical": 0.0,
+        "top10_canonical": 0.0,
+        "n_canonical": 7
+      },
+      "test_ale_fq_holdout": {
+        "name": "test_ale_fq_holdout",
+        "n_samples": 887,
+        "top1": 0.33483651280403137,
+        "top3": 0.39346107840538025,
+        "top5": 0.42051857709884644,
+        "top10": 0.45434045791625977,
+        "top1_canonical": 0.0,
+        "top3_canonical": 0.0,
+        "top5_canonical": 0.0,
+        "top10_canonical": 0.0,
+        "n_canonical": 7
+      }
+    }
+  },
+  "no_token_features": {
+    "best_val_canon_top3": 0.08571428805589676,
+    "results": {
+      "test_eco_fq": {
+        "name": "test_eco_fq",
+        "n_samples": 874,
+        "top1": 0.3684210479259491,
+        "top3": 0.5526315569877625,
+        "top5": 0.6075514554977417,
+        "top10": 0.6109839677810669,
+        "top1_canonical": 0.0,
+        "top3_canonical": 0.0,
+        "top5_canonical": 0.0,
+        "top10_canonical": 0.0,
+        "n_canonical": 7
+      },
+      "test_ale_fq_holdout": {
+        "name": "test_ale_fq_holdout",
+        "n_samples": 887,
+        "top1": 0.27395713329315186,
+        "top3": 0.5118376016616821,
+        "top5": 0.5231115818023682,
+        "top10": 0.5298759341239929,
+        "top1_canonical": 0.0,
+        "top3_canonical": 0.0,
+        "top5_canonical": 0.0,
+        "top10_canonical": 0.0,
+        "n_canonical": 7
+      }
+    }
+  },
+  "no_autoregressive_context": {
+    "best_val_canon_top3": 0.07619047909975052,
+    "results": {
+      "test_eco_fq": {
+        "name": "test_eco_fq",
+        "n_samples": 874,
+        "top1": 0.052631575614213943,
+        "top3": 0.15560640394687653,
+        "top5": 0.31350111961364746,
+        "top10": 0.5183066129684448,
+        "top1_canonical": 0.0,
+        "top3_canonical": 0.0,
+        "top5_canonical": 0.0,
+        "top10_canonical": 0.0,
+        "n_canonical": 7
+      },
+      "test_ale_fq_holdout": {
+        "name": "ale",
+        "n_samples": 887,
+        "top1": 0.046223223209381104,
+        "top3": 0.13641487061977386,
+        "top5": 0.2705749571323395,
+        "top10": 0.4182637929916382,
+        "top1_canonical": 0.0,
+        "top3_canonical": 0.0,
+        "top5_canonical": 0.0,
+        "top10_canonical": 0.0,
+        "n_canonical": 7
+      }
+    }
+  }
+}

@@ -12,10 +12,10 @@ Steps:
      reranker (LambdaRank objective) on these features.
 
 Outputs:
-  /mnt/ssd/research/amr/models/day3/single_step_lgbm_d3.pkl
-  /mnt/ssd/research/amr/models/day3/transformer_d3.pt
-  /mnt/ssd/research/amr/models/day3/reranker_d3.pkl
-  /mnt/ssd/research/amr/results/day3/phase_d_results.json
+  work/models/day3/single_step_lgbm_d3.pkl
+  work/models/day3/transformer_d3.pt
+  work/models/day3/reranker_d3.pkl
+  work/results/day3/phase_d_results.json
 """
 from __future__ import annotations
 import os, sys, json, pickle, re, time, logging
@@ -28,7 +28,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 
 # ------ paths
-SSD = Path('/mnt/ssd/research/amr')
+SSD = Path('work')
 SRC = SSD / 'src'
 RESULTS = SSD / 'results' / 'day3'
 MODELS  = SSD / 'models' / 'day3'
@@ -210,7 +210,7 @@ def main():
     }
     for sp in ['ecoli','saureus','kpneumo']:
         try:
-            p = pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet',
+            p = pd.read_parquet(f'work/raw/proteins_{sp}.parquet',
                                 columns=['gene','product','aa_sequence_md5'])
             for gene, kws in canonical_kw.items():
                 if gene in gene_to_md5 and gene_to_md5[gene]:
@@ -428,7 +428,7 @@ def main():
     # gene_to_md5 for transformer (flat dict: gene -> md5 string)
     gene_to_md5_tf = {}
     for sp in ['ecoli','saureus','kpneumo']:
-        p = pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet',
+        p = pd.read_parquet(f'work/raw/proteins_{sp}.parquet',
                             columns=['gene','aa_sequence_md5','aa_length'])
         p = p[p['gene'].notna() & p['aa_sequence_md5'].notna()]
         p = p.sort_values('aa_length')

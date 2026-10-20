@@ -14,7 +14,7 @@ Strategy:
 - Validate via TEM-1 / TEM-52 cosine similarity (must be in [0.70, 0.99]).
 
 Outputs:
-  /mnt/ssd/research/amr/embeddings/
+  work/embeddings/
     protein_embeddings.npz                       # md5 -> [1280] float16
     pooled/<md5>.npy                             # per-md5 pooled float16 [1280] (intermediate)
     residue_embeddings/<md5>.npy                 # per-md5 residue float16 [L,1280] for L<=512
@@ -43,12 +43,12 @@ from tqdm import tqdm
 
 # ------------------ paths and logging ------------------
 
-EMB_DIR = Path('/mnt/ssd/research/amr/embeddings')
+EMB_DIR = Path('work/embeddings')
 POOLED_DIR = EMB_DIR / 'pooled'
 RES_DIR = EMB_DIR / 'residue_embeddings'
 CHK_DIR = EMB_DIR / 'checkpoints'
-LOG_PATH = Path('/mnt/ssd/research/amr/logs/gate4.log')
-GATES_LOG = Path('/mnt/ssd/research/amr/logs/gates.log')
+LOG_PATH = Path('work/logs/gate4.log')
+GATES_LOG = Path('work/logs/gates.log')
 
 EMB_DIR.mkdir(parents=True, exist_ok=True)
 POOLED_DIR.mkdir(parents=True, exist_ok=True)
@@ -73,7 +73,7 @@ DONE_PATH = EMB_DIR / 'done_md5s.txt'
 
 def notify(msg, title='AMR Gate 4', priority=None):
     try:
-        cmd = ['/home/rohit/bin/notify', msg, title]
+        cmd = [os.environ.get('NOTIFY_BIN', 'notify'), msg, title]
         if priority:
             cmd.append(priority)
         subprocess.run(cmd, check=False, timeout=10)
@@ -101,7 +101,7 @@ def build_sequence_set():
     log.info("Loading proteins parquets...")
     all_prots = []
     for sp in ['ecoli', 'saureus', 'kpneumo']:
-        df = pd.read_parquet(f'/mnt/hdd/research/amr/raw/proteins_{sp}.parquet',
+        df = pd.read_parquet(f'work/raw/proteins_{sp}.parquet',
                              columns=['aa_sequence_md5', 'aa_sequence', 'aa_length', 'product'])
         df['species'] = sp
         all_prots.append(df)
@@ -127,7 +127,7 @@ def build_sequence_set():
     # Map transition gene-symbols to md5s.
     # transitions.mutation_added is like 'gyrA_S83L'. The base gene is split('_')[0].
     # In AMRFinder Element symbol we have e.g. 'gyrA_S83L' or 'blaCMY-2'. We can match base of element symbol.
-    tr = pd.read_parquet('/mnt/ssd/research/amr/processed/transitions.parquet',
+    tr = pd.read_parquet('work/processed/transitions.parquet',
                          columns=['mutation_added'])
     tr_genes_base = set(tr['mutation_added'].dropna().str.split('_').str[0].str.lower())
     log.info(f"Transition base-gene tokens: {len(tr_genes_base)}")

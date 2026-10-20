@@ -4,7 +4,7 @@ Phase A5 — Bulk genome assembly FASTA download from BV-BRC.
 Downloads contigs for top E. coli + S. aureus genomes flagged as
 genome_quality_flags='Good'. Saves as gzipped FASTA on HDD.
 
-Target: 5,000 each species (lighter than the agent prompt's 5K E.coli +
+Target: 5,000 each species (lighter than the original plan of 5K E.coli +
 5K S.aureus to stay under HDD budget; we cap at 5K E.coli + 3K S.aureus =
 about 25 + 7 GB = 32 GB, comfortably under 50 GB combined with
 proteins).
@@ -27,10 +27,10 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from tqdm.auto import tqdm
 
-RAW_DIR = Path("/mnt/hdd/research/amr/raw/patric_assemblies")
-META_DIR = Path("/mnt/hdd/research/amr/raw")
-LOG_PATH = Path("/mnt/ssd/research/amr/logs/day2/phaseA5_assemblies.log")
-GATE_LOG = Path("/mnt/ssd/research/amr/logs/gates.log")
+RAW_DIR = Path("work/raw/patric_assemblies")
+META_DIR = Path("work/raw")
+LOG_PATH = Path("work/logs/day2/phaseA5_assemblies.log")
+GATE_LOG = Path("work/logs/gates.log")
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -60,7 +60,7 @@ def setup_logger() -> logging.Logger:
 
 def make_session() -> requests.Session:
     s = requests.Session()
-    s.headers.update({"User-Agent": "amr-research/0.2 (rohit.ravi2@gmail.com)",
+    s.headers.update({"User-Agent": "amr-research/0.2",
                       "Accept": "application/dna+fasta"})
     retry = Retry(total=4, backoff_factor=0.6,
                   status_forcelist=[429, 500, 502, 503, 504])

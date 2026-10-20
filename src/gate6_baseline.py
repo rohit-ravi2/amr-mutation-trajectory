@@ -9,21 +9,21 @@ LambdaRank (LightGBM) that ranks candidate next-mutations given
   secondary K. pneumoniae x meropenem (anecdotal; tiny test set)
 
 Inputs:
-  /mnt/ssd/research/amr/processed/transitions.parquet
-  /mnt/ssd/research/amr/processed/trajectories.parquet
-  /mnt/ssd/research/amr/processed/dms_fitness.parquet
-  /mnt/ssd/research/amr/processed/resistance_genes.parquet
-  /mnt/ssd/research/amr/embeddings/protein_embeddings.npz
-  /mnt/ssd/research/amr/embeddings/residue_embeddings/<md5>.npy
-  /mnt/ssd/research/amr/embeddings/residue_embeddings_index.parquet
-  /mnt/ssd/research/amr/embeddings/_md5_to_amr.parquet
+  work/processed/transitions.parquet
+  work/processed/trajectories.parquet
+  work/processed/dms_fitness.parquet
+  work/processed/resistance_genes.parquet
+  work/embeddings/protein_embeddings.npz
+  work/embeddings/residue_embeddings/<md5>.npy
+  work/embeddings/residue_embeddings_index.parquet
+  work/embeddings/_md5_to_amr.parquet
 
 Outputs:
-  /mnt/ssd/research/amr/models/single_step_lgbm.pkl
-  /mnt/ssd/research/amr/models/esm2_pca_protein.pkl
-  /mnt/ssd/research/amr/models/esm2_pca_residue.pkl
-  /mnt/ssd/research/amr/results/single_step_eval.json
-  /mnt/ssd/research/amr/results/single_step_features.csv (feature gains)
+  work/models/single_step_lgbm.pkl
+  work/models/esm2_pca_protein.pkl
+  work/models/esm2_pca_residue.pkl
+  work/results/single_step_eval.json
+  work/results/single_step_features.csv (feature gains)
 """
 
 import os, sys, re, json, pickle, time, logging, hashlib
@@ -36,7 +36,7 @@ from sklearn.model_selection import GroupKFold
 import lightgbm as lgb
 
 # --- paths -------------------------------------------------------------------
-ROOT = Path("/mnt/ssd/research/amr")
+ROOT = Path("work")
 PROC = ROOT / "processed"
 EMB = ROOT / "embeddings"
 MODELS = ROOT / "models"
@@ -767,7 +767,7 @@ def main():
     LOG.info("Distinct gene_symbols with md5: %d", len(gene_to_md5))
 
     # ---- Fit PCA on protein embeddings
-    # NOTE: kept at 64 / 32 components per agent spec, even though gain analysis
+    # NOTE: kept at 64 / 32 components per the original design, even though gain analysis
     # in the first run showed near-zero contribution. We save the PCA models so
     # the week-2 autoregressive predictor can swap them in at inference.
     pca_p_path = MODELS / "esm2_pca_protein.pkl"

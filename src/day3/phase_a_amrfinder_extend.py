@@ -16,8 +16,8 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-SSD = Path('/mnt/ssd/research/amr')
-RAW = Path('/mnt/hdd/research/amr/raw')
+SSD = Path('work')
+RAW = Path('work/raw')
 OUT_DIR = SSD / 'processed' / 'amrfinder_calls'
 DB = SSD / 'processed' / 'amrfinderplus_db'  # exists from Day-2
 
@@ -40,7 +40,7 @@ def write_fasta(df_proteins, out_path):
                 continue
             f.write(f'>{r["feature_id"]}\n{seq}\n')
 
-AMRFINDER_BIN = '/home/rohit/miniconda3/envs/amrfinder/bin/amrfinder'
+AMRFINDER_BIN = os.environ.get('AMRFINDER_BIN', 'amrfinder')
 
 def run_amrfinder(fasta_path, out_path, organism=None):
     """Run AMRFinder protein mode."""

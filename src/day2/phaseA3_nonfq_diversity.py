@@ -11,7 +11,7 @@ Strategy:
       in the three priority species (e.g. gyrA, parC, blaTEM, ampC).
       Source labeled `card_snp_v3.3.0` and lab_or_clinical='clinical'
       because CARD curates these from clinical isolate literature
-      (agent rule #3 — labelled separately).
+      (labelled separately from lab data).
 
   S2. Imamovic & Sommer 2013 collateral sensitivity ordered trajectories.
       Their paper does NOT deposit machine-readable trajectory data; the
@@ -54,15 +54,15 @@ import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
 
-CARD_SNP = Path("/mnt/hdd/research/amr/raw/card/snps.txt")
-CARD_ARO = Path("/mnt/hdd/research/amr/raw/card/aro_index.tsv")
-TRAJ_PATH = Path("/mnt/ssd/research/amr/processed/trajectories.parquet")
-TRANS_PATH = Path("/mnt/ssd/research/amr/processed/transitions.parquet")
-RG_PATH = Path("/mnt/ssd/research/amr/processed/resistance_genes.parquet")
-META_DIR = Path("/mnt/hdd/research/amr/raw")
-OUT_DIR = Path("/mnt/hdd/research/amr/raw/nonfq_sources")
-LOG_PATH = Path("/mnt/ssd/research/amr/logs/day2/phaseA3_nonfq.log")
-GATE_LOG = Path("/mnt/ssd/research/amr/logs/gates.log")
+CARD_SNP = Path("work/raw/card/snps.txt")
+CARD_ARO = Path("work/raw/card/aro_index.tsv")
+TRAJ_PATH = Path("work/processed/trajectories.parquet")
+TRANS_PATH = Path("work/processed/transitions.parquet")
+RG_PATH = Path("work/processed/resistance_genes.parquet")
+META_DIR = Path("work/raw")
+OUT_DIR = Path("work/raw/nonfq_sources")
+LOG_PATH = Path("work/logs/day2/phaseA3_nonfq.log")
+GATE_LOG = Path("work/logs/gates.log")
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)

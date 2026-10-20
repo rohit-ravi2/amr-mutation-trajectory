@@ -35,3 +35,6 @@ logs/torch_*.log
 
 # Notebook noise
 .ipynb_checkpoints/
+
+# local working data (raw downloads, processed tables, embeddings, outputs)
+work/

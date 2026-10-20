@@ -20,8 +20,8 @@ LOG_FMT = "%(asctime)s %(levelname)s %(message)s"
 logging.basicConfig(level=logging.INFO, format=LOG_FMT, stream=sys.stdout)
 log = logging.getLogger("gate0")
 
-SSD_ROOT = Path("/mnt/ssd/research/amr")
-HDD_ROOT = Path("/mnt/hdd/research/amr")
+SSD_ROOT = Path("work")
+HDD_ROOT = Path("work")
 GATE_LOG = SSD_ROOT / "logs" / "gates.log"
 
 REQUIRED_DIRS = [

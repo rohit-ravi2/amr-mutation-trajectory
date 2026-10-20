@@ -6,12 +6,12 @@ Architecture (from Day-2 prompt B1):
   Decoder: Linear(128 -> 512) -> ReLU -> Linear(512 -> 1280)
   MSE reconstruction loss.
 
-Trained on all per-residue ESM2 embeddings from /mnt/ssd/research/amr/embeddings/
+Trained on all per-residue ESM2 embeddings from work/embeddings/
 residue_embeddings/*.npy (Day-1 produced 11,382 short proteins; new Day-2
 ones added by Phase A1 will be re-trained later if available).
 
 Output:
-  /mnt/ssd/research/amr/models/residue_projector.pt
+  work/models/residue_projector.pt
     state_dict + config dict.
 
 Quality verification:
@@ -37,15 +37,15 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, IterableDataset
 from tqdm.auto import tqdm
 
-EMB_DIR = Path("/mnt/ssd/research/amr/embeddings")
+EMB_DIR = Path("work/embeddings")
 RES_DIR = EMB_DIR / "residue_embeddings"
 PROT_NPZ = EMB_DIR / "protein_embeddings.npz"
 INDEX_PARQUET = EMB_DIR / "residue_embeddings_index.parquet"
 
-MODEL_OUT = Path("/mnt/ssd/research/amr/models/residue_projector.pt")
-CFG_OUT   = Path("/mnt/ssd/research/amr/models/residue_projector_cfg.json")
-LOG_PATH  = Path("/mnt/ssd/research/amr/logs/day2/phaseB_residue_projector.log")
-GATE_LOG  = Path("/mnt/ssd/research/amr/logs/gates.log")
+MODEL_OUT = Path("work/models/residue_projector.pt")
+CFG_OUT   = Path("work/models/residue_projector_cfg.json")
+LOG_PATH  = Path("work/logs/day2/phaseB_residue_projector.log")
+GATE_LOG  = Path("work/logs/gates.log")
 
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 MODEL_OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -176,7 +176,7 @@ def validate_tem_pair(model: ResidueAE, device: str, log: logging.Logger
     # Map md5 -> array
     # Pick TEM-1 and TEM-52 via the resistance_genes table to find associated md5s.
     try:
-        rg = pd.read_parquet("/mnt/ssd/research/amr/processed/resistance_genes.parquet")
+        rg = pd.read_parquet("work/processed/resistance_genes.parquet")
     except Exception:
         rg = pd.DataFrame()
 
@@ -188,7 +188,7 @@ def validate_tem_pair(model: ResidueAE, device: str, log: logging.Logger
     candidates_md5 = set()
     for sp in ["ecoli", "kpneumo"]:
         try:
-            df = pd.read_parquet(Path("/mnt/hdd/research/amr/raw") / f"proteins_{sp}.parquet",
+            df = pd.read_parquet(Path("work/raw") / f"proteins_{sp}.parquet",
                                  columns=["product", "aa_sequence_md5"])
         except Exception:
             continue

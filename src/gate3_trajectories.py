@@ -27,10 +27,10 @@ Source labels in the output:
   E:    inferred_card  (cross-section ladder)    -> inferred_card
 
 Output:
-  /mnt/ssd/research/amr/processed/trajectories.parquet
-  /mnt/ssd/research/amr/processed/transitions.parquet
-  /mnt/ssd/research/amr/processed/gate3_intermediate/<source>.parquet
-  /mnt/ssd/research/amr/processed/gate3_summary.json
+  work/processed/trajectories.parquet
+  work/processed/transitions.parquet
+  work/processed/gate3_intermediate/<source>.parquet
+  work/processed/gate3_summary.json
 """
 
 from __future__ import annotations
@@ -55,9 +55,9 @@ from tqdm import tqdm
 # Config
 # -----------------------------------------------------------------------------
 
-SSD_PROC = Path("/mnt/ssd/research/amr/processed")
-HDD_RAW = Path("/mnt/hdd/research/amr/raw/gate3")
-LOGS = Path("/mnt/ssd/research/amr/logs")
+SSD_PROC = Path("work/processed")
+HDD_RAW = Path("work/raw/gate3")
+LOGS = Path("work/logs")
 INTERMED = SSD_PROC / "gate3_intermediate"
 
 SSD_PROC.mkdir(parents=True, exist_ok=True)

@@ -42,18 +42,18 @@ import pandas as pd
 import requests
 from tqdm.auto import tqdm
 
-OUT_RAW_DIR = Path("/mnt/hdd/research/amr/raw/aledb_mic")
-OUT_PROCESSED = Path("/mnt/ssd/research/amr/processed/transitions_with_mic.parquet")
-TRANS_PATH = Path("/mnt/ssd/research/amr/processed/transitions.parquet")
-TRAJ_PATH = Path("/mnt/ssd/research/amr/processed/trajectories.parquet")
-LOG_PATH = Path("/mnt/ssd/research/amr/logs/day2/phaseA2_aledb_mic.log")
-GATE_LOG = Path("/mnt/ssd/research/amr/logs/gates.log")
+OUT_RAW_DIR = Path("work/raw/aledb_mic")
+OUT_PROCESSED = Path("work/processed/transitions_with_mic.parquet")
+TRANS_PATH = Path("work/processed/transitions.parquet")
+TRAJ_PATH = Path("work/processed/trajectories.parquet")
+LOG_PATH = Path("work/logs/day2/phaseA2_aledb_mic.log")
+GATE_LOG = Path("work/logs/gates.log")
 
 OUT_RAW_DIR.mkdir(parents=True, exist_ok=True)
 OUT_PROCESSED.parent.mkdir(parents=True, exist_ok=True)
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-UA = "amr-research/0.2 (rohit.ravi2@gmail.com)"
+UA = "amr-research/0.2"
 HEADERS = {"User-Agent": UA}
 
 # Project numbers that the trajectory table maps to.

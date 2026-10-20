@@ -51,7 +51,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
 # Paths
-SSD = Path("/mnt/ssd/research/amr")
+SSD = Path("work")
 PROC = SSD / "processed"
 EMB  = SSD / "embeddings"
 MODEL_OUT = SSD / "models" / "trajectory_transformer.pt"

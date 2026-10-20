@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-SSD = Path('/mnt/ssd/research/amr')
+SSD = Path('work')
 OUT = SSD / 'processed' / 'day3'
 OUT.mkdir(parents=True, exist_ok=True)
 
